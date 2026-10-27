@@ -1,0 +1,49 @@
+# San Antonio summer LST time series at 10 m, Landsat path 27 only.
+# Anything not listed here takes its default (see lst_agents/config.py).
+
+job: sa-p27                      # short name: lowercase letters, digits, hyphens
+
+area:
+  center_lon: -98.49             # downtown San Antonio
+  center_lat: 29.42
+  side_km: 56.7                  # 9 × 9 tiles of 6.3 km; snapped to whole 810 m Wald blocks
+
+years: [2017, 2025]              # Sentinel-2 and the Satellite Embedding start in 2017
+months: [5, 9]                   # May to September
+
+landsat:
+  path: 27                       # images the whole area on every pass
+  min_clear: 0.20                # skip passes with less of the area clear
+  reference_clear: 0.90          # passes this clear define the anomaly reference pattern
+
+sentinel2:
+  window_days: 3                 # Sentinel-2 within ±3 days of the Landsat pass
+  fallback_days: 7               # wider window, used only if ±3 days is too cloudy
+  min_cover: 0.90
+
+model:
+  n_trees: 100
+  n_train: 6000
+  alphas: [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+
+grid: {fine_m: 10, coarse_m: 90, wald_factor: 9}   # Wald test 810 m → 90 m, the same 9× step as 90 m → 10 m
+
+pilot_passes: 2                  # run end to end first, to measure compute and storage
+max_passes: null                 # set a number to cap the run (keeps the clearest passes)
+exclude_dates: []                # e.g. ['2019-06-14']
+
+stats: {early_through: 2021}     # early = Landsat 8 only (2017–2021); late = Landsat 8 + 9 (2022–2025)
+
+gates:
+  approve_plan: true
+  energy_tol_k: 0.1
+  eecu_hours_over: 50            # projected Earth Engine compute above this waits for you
+  storage_gb_over: 10            # projected new asset storage above this waits for you
+  ee_monthly_eecu_hours: 150     # Earth Engine noncommercial Community tier
+  agent_budget_usd: 5            # cap on Claude spend for the whole run
+  session_budget_usd: 1
+
+validation:
+  station: {name: SAT, lon: -98.4698, lat: 29.5337, lcd_units: F}   # NOAA LCD CSV goes in stations/ in the bucket
+  crosscheck_path: 28            # compare the 90 m anomaly pattern with path 28 where they overlap
+  plausible_c: [0, 80]

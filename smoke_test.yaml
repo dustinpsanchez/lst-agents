@@ -1,0 +1,26 @@
+# Smoke test: the whole pipeline on a small box and four passes, before the full run.
+# About 8% of the full area per pass, so mistakes cost little. Run this first.
+
+job: sa-smoke
+
+area:
+  center_lon: -98.485            # the Phase 1 test box, between downtown and the SAT station
+  center_lat: 29.475
+  side_km: 16.2                  # 20 Wald blocks of 810 m, the smallest the Wald test allows
+
+years: [2023, 2023]
+months: [5, 9]
+
+landsat: {path: 27, min_clear: 0.5}
+
+max_passes: 4                    # the four clearest passes of summer 2023
+pilot_passes: 2
+
+gates:
+  eecu_hours_over: 10
+  storage_gb_over: 2
+  agent_budget_usd: 2
+
+validation:
+  station: {name: SAT, lon: -98.4698, lat: 29.5337, lcd_units: F}
+  crosscheck_path: null          # path 28 doesn't reach this box; the full run checks it

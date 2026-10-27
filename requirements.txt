@@ -1,0 +1,4 @@
+# Installed by the notebook's setup cell (pinned so a new release can't slip in unnoticed).
+claude-agent-sdk==0.2.172
+earthengine-api==1.7.50
+# Already in Colab: google-cloud-storage, pandas, numpy, matplotlib, pyyaml
